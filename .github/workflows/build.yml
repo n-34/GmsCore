@@ -15,7 +15,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
-      - run: ./gradlew --no-daemon build
+      - name: Build with Gradle
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: ./gradlew assembleRelease --no-daemon build
         env:
           TERM: dumb
           JAVA_OPTS: -Xmx2048m
