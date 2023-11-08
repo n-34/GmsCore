@@ -17,11 +17,11 @@ jobs:
           cache: 'gradle'
       - name: Build with Gradle
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: ./gradlew assembleRelease --no-daemon build
-        env:
           TERM: dumb
           JAVA_OPTS: -Xmx2048m
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew assembleRelease --no-daemon build
+        
       - name: Sign APK
         id: sign_apk
         uses: ilharp/sign-android-release@v1
