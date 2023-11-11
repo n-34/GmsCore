@@ -21,31 +21,9 @@ jobs:
           JAVA_OPTS: -Xmx2048m
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew assembleRelease --no-daemon build
-        
-      - name: Sign APK
-        id: sign_apk
-        uses: ilharp/sign-android-release@v1
-        with:
-          releaseDir: ./app/build/outputs/apk/release/
-          signingKey: ${{ secrets.SIGNING_KEYSTORE }}
-          keyStorePassword: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
-          keyAlias: ${{ secrets.SIGNING_KEY_ALIAS }}
-          keyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
+      - name: Publish artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set current date as env variable
         run: echo "date_now=$(date +'%d.%m.%Y')" >> $GITHUB_ENV
-      - name: Add version to APK
-        run: mv ${{ steps.sign_apk.outputs.signedFile }} microg{{ env.date_now }}.apk
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: microg-'${{ env.date_now }}'
-          path: ${{ steps.sign_apk.outputs.signedFile }}
-      - name: Publish APK
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ env.date_now }}"
-          prerelease: false
-          title: "microg-${{ env.date_now }}"
-          files: microg{{ env.date_now }}.apk
